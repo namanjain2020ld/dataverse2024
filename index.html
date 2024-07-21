@@ -7,14 +7,6 @@
   <style>
 
 
-  @media print {
-    .table td,
-    .table th {
-        background-color: transparent !important;
-        -webkit-print-color-adjust: exact !important;
-
-    }
-}
 
 
     
@@ -22,7 +14,8 @@
     table {
       width: 100%;
       border-collapse: collapse;
-       position: absolute; 
+       position: relative;
+top: 40px; left: 40px;
       
     }
     th, td {
