@@ -20,19 +20,22 @@
   </style>
 </head>
 <body>
-  <center><h1>Live Results</h1></center>
+  <h1>Live Results</h1>
   <table>
     <thead>
       <tr>
-        <th> Team </th>
+        <th>Student ID</th>
         <th>Marks</th>
+        <th>Aptitude</th>
+        <th>Case 1</th>
+        <th>Case 2</th>
       </tr>
     </thead>
     <tbody id="results"></tbody>
   </table>
 
   <script>
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwrf3hav-OW7rdbnNdlraCGGt_8TxQcjht-1v410ubZ0A9mjJly3NGkysQygWDOkXj0gQ/exec'; // Replace with the URL of your deployed Google Apps Script web app
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwZKqn61cwM-_HIiDCEd1B8EMtrke5aFyMaBvMNNwcpQYJtlrGs4HglYNWN0OiEc9X_JQ/exec'; // Replace with the URL of your deployed Google Apps Script web app
     let highestResults = {};
 
     async function fetchResults() {
@@ -46,10 +49,13 @@
         for (let i = 1; i < data.length; i++) {
           const row = data[i];
           const studentId = row[0]; // Assuming the first column is a unique identifier (e.g., student name or ID)
-          const result = parseFloat(row[1]); // Assuming the second column is the result (e.g., marks)
+          const marks = parseFloat(row[1]); // Assuming the second column is the marks
+          const aptitude = parseFloat(row[2]); // Assuming the third column is the aptitude score
+          const case1 = parseFloat(row[3]); // Assuming the fourth column is the case 1 score
+          const case2 = parseFloat(row[4]); // Assuming the fifth column is the case 2 score
 
-          if (!highestResults[studentId] || result > highestResults[studentId]) {
-            newHighestResults[studentId] = result;
+          if (!highestResults[studentId] || marks > highestResults[studentId].marks) {
+            newHighestResults[studentId] = { marks, aptitude, case1, case2 };
             updated = true;
           } else {
             newHighestResults[studentId] = highestResults[studentId];
@@ -70,18 +76,27 @@
       resultsTbody.innerHTML = '';
 
       // Convert results object to an array and sort by marks in descending order
-      const sortedResults = Object.entries(results).sort((a, b) => b[1] - a[1]);
+      const sortedResults = Object.entries(results).sort((a, b) => b[1].marks - a[1].marks);
 
       sortedResults.forEach(([studentId, result]) => {
         const row = document.createElement('tr');
         const studentIdCell = document.createElement('td');
-        const resultCell = document.createElement('td');
+        const marksCell = document.createElement('td');
+        const aptitudeCell = document.createElement('td');
+        const case1Cell = document.createElement('td');
+        const case2Cell = document.createElement('td');
 
         studentIdCell.textContent = studentId;
-        resultCell.textContent = result;
+        marksCell.textContent = result.marks;
+        aptitudeCell.textContent = result.aptitude;
+        case1Cell.textContent = result.case1;
+        case2Cell.textContent = result.case2;
 
         row.appendChild(studentIdCell);
-        row.appendChild(resultCell);
+        row.appendChild(marksCell);
+        row.appendChild(aptitudeCell);
+        row.appendChild(case1Cell);
+        row.appendChild(case2Cell);
         resultsTbody.appendChild(row);
       });
     }
