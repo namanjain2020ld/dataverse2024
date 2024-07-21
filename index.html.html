@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Results</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <center><h1>Live Results</h1></center>
+  <table>
+    <thead>
+      <tr>
+        <th> Team </th>
+        <th>Marks</th>
+      </tr>
+    </thead>
+    <tbody id="results"></tbody>
+  </table>
+
+  <script>
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwrf3hav-OW7rdbnNdlraCGGt_8TxQcjht-1v410ubZ0A9mjJly3NGkysQygWDOkXj0gQ/exec'; // Replace with the URL of your deployed Google Apps Script web app
+    let highestResults = {};
+
+    async function fetchResults() {
+      try {
+        const response = await fetch(scriptUrl);
+        const data = await response.json();
+        let newHighestResults = {};
+        let updated = false;
+
+        // Skip the first row by starting the loop from index 1
+        for (let i = 1; i < data.length; i++) {
+          const row = data[i];
+          const studentId = row[0]; // Assuming the first column is a unique identifier (e.g., student name or ID)
+          const result = parseFloat(row[1]); // Assuming the second column is the result (e.g., marks)
+
+          if (!highestResults[studentId] || result > highestResults[studentId]) {
+            newHighestResults[studentId] = result;
+            updated = true;
+          } else {
+            newHighestResults[studentId] = highestResults[studentId];
+          }
+        }
+
+        if (updated) {
+          highestResults = newHighestResults;
+          updateResultsDisplay(highestResults);
+        }
+      } catch (error) {
+        console.error('Error fetching results:', error);
+      }
+    }
+
+    function updateResultsDisplay(results) {
+      const resultsTbody = document.getElementById('results');
+      resultsTbody.innerHTML = '';
+
+      // Convert results object to an array and sort by marks in descending order
+      const sortedResults = Object.entries(results).sort((a, b) => b[1] - a[1]);
+
+      sortedResults.forEach(([studentId, result]) => {
+        const row = document.createElement('tr');
+        const studentIdCell = document.createElement('td');
+        const resultCell = document.createElement('td');
+
+        studentIdCell.textContent = studentId;
+        resultCell.textContent = result;
+
+        row.appendChild(studentIdCell);
+        row.appendChild(resultCell);
+        resultsTbody.appendChild(row);
+      });
+    }
+
+    setInterval(fetchResults, 5000); // Fetch results every 5 seconds
+  </script>
+</body>
+</html>
