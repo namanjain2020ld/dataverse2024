@@ -7,6 +7,18 @@
   <style>
 
 
+  @media print {
+    .table td,
+    .table th {
+        background-color: transparent !important;
+        -webkit-print-color-adjust: exact !important;
+
+    }
+}
+
+
+    
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -29,7 +41,7 @@
   
  
   
-  <table style="opacity: 0%;">
+  <table>
     <thead>
       <tr>
         <th>team ID</th>
