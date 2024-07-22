@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Results</title>
   <style>
+    /* Base styles */
     body {
       font-family: 'Arial', sans-serif;
       background-color: #f0f0f0;
       padding: 20px;
+      transition: background-color 0.3s ease;
     }
 
     h1 {
@@ -75,109 +77,114 @@
       100% { opacity: 0.5; }
     }
 
-    /* stop watch*/
+    /* Stop watch*/
     .stopwatch-container {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        display: flex;
-        align-items: center;
-        font-size: 36px;
-        color: #333;
-        font-family: 'Arial', sans-serif;
-      }
-    
-      .stopwatch-digit {
-        width: 50px;
-        height: 60px;
-        text-align: center;
-        line-height: 60px;
-        background-color: rgba(255, 255, 255, 0.8);
-        border-radius: 8px;
-        margin: 0 5px;
-        animation: fade-in 1s ease-out;
-      }
-    
-      .colon {
-        font-size: 36px;
-        margin: 0 5px;
-        opacity: 0.7;
-      }
-    
-      @keyframes fade-in {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      font-size: 36px;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+      z-index: 100; /* Ensure stopwatch stays above other content */
+    }
 
+    .stopwatch-digit {
+      width: 50px;
+      height: 60px;
+      text-align: center;
+      line-height: 60px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      margin: 0 5px;
+      animation: fade-in 1s ease-out;
+    }
+
+    .colon {
+      font-size: 36px;
+      margin: 0 5px;
+      opacity: 0.7;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Day-Night mode toggle */
+    #day-night-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      z-index: 100; /* Ensure toggle stays above other content */
+    }
+
+    #day-night-toggle .moon-icon, #day-night-toggle .sun-icon {
+      font-size: 24px;
+      margin-right: 5px;
+      transition: transform 0.3s ease; /* Smooth transition for toggle icon */
+    }
+
+    /* Night mode styles */
+    body.night-mode {
+      background-color: #1a1a1a;
+      color: #ddd;
+    }
+
+    body.night-mode h1 {
+      color: #ddd;
+    }
+
+    body.night-mode th {
+      background-color: #333;
+      color: #ddd;
+    }
+
+    body.night-mode td {
+      background-color: #444;
+      color: #ccc;
+    }
+
+    body.night-mode .stopwatch-digit {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #ddd;
+    }
+
+    body.night-mode .colon {
+      color: #bbb;
+    }
+
+    body.night-mode .skeleton-row td {
+      background-color: #333;
+    }
 
   </style>
 </head>
 <body>
 
+  <!-- Day-Night mode toggle -->
+  <div id="day-night-toggle" onclick="toggleDayNightMode()">
+    <span class="moon-icon">🌙</span>
+    <span class="sun-icon">☀️</span> Toggle Day/Night Mode
+  </div>
 
-    <div id="stopwatch" class="stopwatch-container">
-        <div id="hours" class="stopwatch-digit"></div>
-        <div class="colon">:</div>
-        <div id="minutes" class="stopwatch-digit"></div>
-        <div class="colon">:</div>
-        <div id="seconds" class="stopwatch-digit"></div>
-      </div>
-    
-      <script>
-        // JavaScript code goes here
-          // Stopwatch countdown logic
-  let countdownInterval;
-  let countdownTime = parseInt(localStorage.getItem('countdownTime')) || 3600; // Default 3600 seconds (1 hour)
+  <!-- Stopwatch -->
+  <div id="stopwatch" class="stopwatch-container">
+    <div id="hours" class="stopwatch-digit"></div>
+    <div class="colon">:</div>
+    <div id="minutes" class="stopwatch-digit"></div>
+    <div class="colon">:</div>
+    <div id="seconds" class="stopwatch-digit"></div>
+  </div>
 
-  function startStopwatch() {
-    updateStopwatchDisplay();
-
-    countdownInterval = setInterval(() => {
-      countdownTime--;
-      updateStopwatchDisplay();
-
-      // Save countdownTime to localStorage
-      localStorage.setItem('countdownTime', countdownTime.toString());
-
-      if (countdownTime <= 0) {
-        clearInterval(countdownInterval);
-        alert('Countdown complete!');
-        // Optionally reset countdown time or take other action upon completion
-      }
-    }, 1000); // Update every second
-  }
-
-  function updateStopwatchDisplay() {
-    const hours = Math.floor(countdownTime / 3600);
-    const minutes = Math.floor((countdownTime % 3600) / 60);
-    const seconds = countdownTime % 60;
-
-    document.getElementById('hours').textContent = formatTime(hours);
-    document.getElementById('minutes').textContent = formatTime(minutes);
-    document.getElementById('seconds').textContent = formatTime(seconds);
-  }
-
-  function formatTime(time) {
-    return time < 10 ? `0${time}` : time;
-  }
-
-  // Initialize stopwatch
-  startStopwatch();
-
-
-
-
-      </script>
-
-
-
-
-
-    
   <h1>Live Results</h1>
 
   <table>
@@ -199,38 +206,54 @@
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbxCcNX-iYaW-cncPF0hzKE5EsTyDBDTNyiaIasGs2KjcNM9GzSIRTNIDnz0-S8iCbwFFQ/exec'; // Replace with your actual script URL
     let highestResults = {};
 
-    async function fetchResults() {
-      try {
-        const response = await fetch(scriptUrl);
-        const data = await response.json();
+    let countdownHours = 1; // Adjust countdown hours here
+    let countdownMinutes = 0; // Adjust countdown minutes here
+    let countdownSeconds = 2; // Adjust countdown seconds here
 
-        let newHighestResults = {};
-        let updated = false;
+    let startTime = localStorage.getItem('startTime');
+    if (!startTime) {
+      startTime = Date.now();
+      localStorage.setItem('startTime', startTime);
+    }
 
-        // Assuming data is in the format [ [studentId, marks, aptitude, case1, case2], ... ]
-        for (let i = 0; i < data.length; i++) {
-          const row = data[i];
-          const studentId = row[0];
-          const marks = parseFloat(row[1]);
-          const aptitude = parseFloat(row[2]);
-          const case1 = parseFloat(row[3]);
-          const case2 = parseFloat(row[4]);
-
-          if (!highestResults[studentId] || marks > highestResults[studentId].marks) {
-            newHighestResults[studentId] = { marks, aptitude, case1, case2 };
-            updated = true;
-          } else {
-            newHighestResults[studentId] = highestResults[studentId];
+    function fetchResults() {
+      fetch(scriptUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
           }
-        }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Fetched data:', data); // Log fetched data for debugging
+          let newHighestResults = {};
+          let updated = false;
 
-        if (updated) {
-          highestResults = newHighestResults;
-          updateResultsDisplay(highestResults);
-        }
-      } catch (error) {
-        console.error('Error fetching results:', error);
-      }
+          // Assuming data is in the format [ [studentId, marks, aptitude, case1, case2], ... ]
+          for (let i = 0; i < data.length; i++) {
+            const row = data[i];
+            const studentId = row[0];
+            const marks = parseFloat(row[1]);
+            const aptitude = parseFloat(row[2]);
+            const case1 = parseFloat(row[3]);
+            const case2 = parseFloat(row[4]);
+
+            if (!highestResults[studentId] || marks > highestResults[studentId].marks) {
+              newHighestResults[studentId] = { marks, aptitude, case1, case2 };
+              updated = true;
+            } else {
+              newHighestResults[studentId] = highestResults[studentId];
+            }
+          }
+
+          if (updated) {
+            highestResults = newHighestResults;
+            updateResultsDisplay(highestResults);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching results:', error);
+        });
     }
 
     function updateResultsDisplay(results) {
@@ -321,6 +344,63 @@
           tbody.appendChild(row);
         }, index * 100); // Delay appearance for smooth, slow sequential effect
       });
+    }
+
+    // Countdown timer functionality
+    function startCountdown() {
+      let elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      let totalSeconds = countdownHours * 3600 + countdownMinutes * 60 + countdownSeconds - elapsedSeconds;
+
+      stopwatchInterval = setInterval(() => {
+        totalSeconds--;
+
+        if (totalSeconds < 0) {
+          clearInterval(stopwatchInterval);
+          totalSeconds = 0;
+          // Optionally handle countdown completion here
+        }
+
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        updateStopwatchDisplay(hours, minutes, seconds);
+
+      }, 1000); // Update every second
+
+      updateStopwatchDisplay(Math.floor(totalSeconds / 3600), Math.floor((totalSeconds % 3600) / 60), totalSeconds % 60);
+    }
+
+    function updateStopwatchDisplay(hours, minutes, seconds) {
+      document.getElementById('hours').textContent = padTime(hours);
+      document.getElementById('minutes').textContent = padTime(minutes);
+      document.getElementById('seconds').textContent = padTime(seconds);
+    }
+
+    function padTime(time) {
+      return time < 10 ? `0${time}` : time;
+    }
+
+    // Start the countdown stopwatch when the page loads
+    startCountdown();
+
+    // Day-Night mode toggle function
+    function toggleDayNightMode() {
+      const body = document.body;
+      body.classList.toggle('night-mode');
+      const toggleIcon = document.getElementById('day-night-toggle');
+      const moonIcon = toggleIcon.querySelector('.moon-icon');
+      const sunIcon = toggleIcon.querySelector('.sun-icon');
+
+      if (body.classList.contains('night-mode')) {
+        // Night mode activated
+        moonIcon.style.transform = 'scale(0)';
+        sunIcon.style.transform = 'scale(1)';
+      } else {
+        // Day mode activated
+        moonIcon.style.transform = 'scale(1)';
+        sunIcon.style.transform = 'scale(0)';
+      }
     }
 
     // Initial loading state with skeleton rows
