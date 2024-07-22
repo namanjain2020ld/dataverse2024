@@ -1,3 +1,22 @@
+
+Conversation opened. 2 messages. All messages read.
+
+Skip to content
+Using Gmail with screen readers
+Enable desktop notifications for Gmail.
+   OK  No, thanks
+6 of 117
+Spreadsheet shared with you: ‘Live Result ’
+Inbox
+
+Dark North (via Google Sheets)
+Sun, 21 Jul, 19:11 (14 hours ago)
+Dark North shared a spreadsheet Dark North (ayushchopda3@gmail.com) has invited you to edit the following spreadsheet:Live Result OpenIf you don't want to recei
+
+mark shot <markshot2020ld@gmail.com>
+09:25 (5 minutes ago)
+to Dark
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,16 +24,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Live Results</title>
   <style>
-
-
-
-
-    
-
+    /* Existing CSS styles */
     table {
       width: 100%;
       border-collapse: collapse;
-
+      margin-top: 20px; /* Added margin for better spacing */
     }
     th, td {
       border: 1px solid #ddd;
@@ -24,24 +38,36 @@
     th {
       background-color: #f2f2f2;
     }
+
+    /* Skeleton loading animation */
+    .skeleton-row td {
+      background-color: #f0f0f0; /* Light gray background */
+      animation: pulse 1.5s infinite ease-in-out; /* Animation definition */
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
   </style>
 </head>
 <body>
   <h1>Live Results</h1>
 
- 
-  
   <table>
     <thead>
       <tr>
         <th>Team</th>
-        <th> Total Marks</th>
-        <th> Aptitude </th>
-        <th> Case 1 </th>
-        <th> Case 2  </th>
+        <th>Total Marks</th>
+        <th>Aptitude</th>
+        <th>Case 1</th>
+        <th>Case 2</th>
       </tr>
     </thead>
-    <tbody id="results"></tbody>
+    <tbody id="results">
+      <!-- Skeleton rows will be dynamically added here -->
+    </tbody>
   </table>
 
   <script>
@@ -55,14 +81,13 @@
         let newHighestResults = {};
         let updated = false;
 
-        // Skip the first row by starting the loop from index 1
         for (let i = 1; i < data.length; i++) {
           const row = data[i];
-          const studentId = row[0]; // Assuming the first column is a unique identifier (e.g., student name or ID)
-          const marks = parseFloat(row[1]); // Assuming the second column is the marks
-          const aptitude = parseFloat(row[2]); // Assuming the third column is the aptitude score
-          const case1 = parseFloat(row[3]); // Assuming the fourth column is the case 1 score
-          const case2 = parseFloat(row[4]); // Assuming the fifth column is the case 2 score
+          const studentId = row[0];
+          const marks = parseFloat(row[1]);
+          const aptitude = parseFloat(row[2]);
+          const case1 = parseFloat(row[3]);
+          const case2 = parseFloat(row[4]);
 
           if (!highestResults[studentId] || marks > highestResults[studentId].marks) {
             newHighestResults[studentId] = { marks, aptitude, case1, case2 };
@@ -85,7 +110,6 @@
       const resultsTbody = document.getElementById('results');
       resultsTbody.innerHTML = '';
 
-      // Convert results object to an array and sort by marks in descending order
       const sortedResults = Object.entries(results).sort((a, b) => b[1].marks - a[1].marks);
 
       sortedResults.forEach(([studentId, result]) => {
@@ -111,9 +135,28 @@
       });
     }
 
+    // Function to show skeleton loader
+    function showSkeletonLoader() {
+      const resultsTbody = document.getElementById('results');
+      resultsTbody.innerHTML = ''; // Clear existing content
+
+      // Add skeleton rows
+      for (let i = 0; i < 3; i++) { // Adjust number of skeleton rows as needed
+        const row = document.createElement('tr');
+        row.classList.add('skeleton-row');
+        for (let j = 0; j < 5; j++) { // Assuming 5 columns
+          const cell = document.createElement('td');
+          cell.textContent = 'Loading...';
+          row.appendChild(cell);
+        }
+        resultsTbody.appendChild(row);
+      }
+    }
+
+    // Initial loading state with skeleton rows
+    showSkeletonLoader();
     setInterval(fetchResults, 5000); // Fetch results every 5 seconds
   </script>
-
-
 </body>
 </html>
+
